@@ -18,6 +18,7 @@ import (
 	net "github.com/libp2p/go-libp2p-net"
 	peer "github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
+	quic "github.com/libp2p/go-libp2p-quic-transport"
 	ma "github.com/multiformats/go-multiaddr"
 	gologging "github.com/whyrusleeping/go-logging"
 )
@@ -42,9 +43,14 @@ func makeBasicHost(listenPort int, secio bool, randseed int64) (host.Host, error
 	if err != nil {
 		return nil, err
 	}
+	quicTransport, err := quic.NewTransport(priv)
+	if err != nil {
+		return nil, err
+	}
 
 	opts := []libp2p.Option{
-		libp2p.ListenAddrStrings(fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", listenPort)),
+		libp2p.ListenAddrStrings(fmt.Sprintf("/ip4/127.0.0.1/udp/%d/quic", listenPort)),
+		libp2p.Transport(quicTransport),
 		libp2p.Identity(priv),
 	}
 
