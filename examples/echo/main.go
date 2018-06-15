@@ -43,14 +43,10 @@ func makeBasicHost(listenPort int, secio bool, randseed int64) (host.Host, error
 	if err != nil {
 		return nil, err
 	}
-	quicTransport, err := quic.NewTransport(priv)
-	if err != nil {
-		return nil, err
-	}
 
 	opts := []libp2p.Option{
 		libp2p.ListenAddrStrings(fmt.Sprintf("/ip4/127.0.0.1/udp/%d/quic", listenPort)),
-		libp2p.Transport(quicTransport),
+		libp2p.Transport(quic.NewTransport),
 		libp2p.Identity(priv),
 	}
 
